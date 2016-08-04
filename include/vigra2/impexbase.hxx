@@ -297,6 +297,30 @@ namespace vigra
             }
         }
 
+        template <class T, int N>
+        inline static range_t
+        find_source_value_range(const ImageExportInfo& export_info, ArrayViewND<N,T> view)
+        {
+            if (export_info.getFromMin() < export_info.getFromMax())
+            {
+                return range_t(export_info.getFromMin(), export_info.getFromMax());
+            }
+            else
+            {
+                auto minmax = view.minmax();
+                const range_t range(minmax[0],minmax[1]);
+
+                if (range.first < range.second)
+                {
+                    return range_t(range.first, range.second);
+                }
+                else
+                {
+                    return range_t(range.first, range.first + 1.0);
+                }
+            }
+        }
+
 
         template <typename T>
         inline static range_t

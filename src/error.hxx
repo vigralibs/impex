@@ -38,7 +38,6 @@
 
 #include <vigra2/error.hxx>
 
-#define VIGRA_IMPEX_FINALIZED(p) { if (p) \
-    vigra_precondition( false, "encoder settings were already finalized" ); }
+#define VIGRA_IMPEX_FINALIZED(p) vigra_precondition( !p, "encoder settings were already finalized" )
 
 #endif // VIGRA_IMPEX_ERROR_HXX

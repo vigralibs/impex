@@ -36,12 +36,17 @@
 #ifndef VIGRA_IMPEXALPHA_HXX
 #define VIGRA_IMPEXALPHA_HXX
 
+#include <tuple>
+#include <type_traits>
+#include <utility>
 #include <vector>
+
+#include <vigra2/shape.hxx>
+#include <vigra2/sized_int.hxx>
 
 #include "imageinfo.hxx"
 #include "impex.hxx"
 #include "impexbase.hxx"
-#include "multi_shape.hxx"
 
 namespace vigra
 {
@@ -205,34 +210,34 @@ namespace vigra
         importImageAlpha(const ImageImportInfo& import_info,
                          ImageIterator image_iterator, ImageAccessor image_accessor,
                          AlphaIterator alpha_iterator, AlphaAccessor alpha_accessor,
-                         /* isScalar? */ VigraTrueType)
+                         /* isScalar? */ std::true_type)
         {
             VIGRA_UNIQUE_PTR<Decoder> decoder(vigra::decoder(import_info));
 
             switch (pixel_t_of_string(decoder->getPixelType()))
             {
             case UNSIGNED_INT_8:
-                read_image_band_and_alpha<UInt8>(decoder.get(),
+                read_image_band_and_alpha<uint8_t>(decoder.get(),
                                                  image_iterator, image_accessor,
                                                  alpha_iterator, alpha_accessor);
                 break;
             case UNSIGNED_INT_16:
-                read_image_band_and_alpha<UInt16>(decoder.get(),
+                read_image_band_and_alpha<uint16_t>(decoder.get(),
                                                   image_iterator, image_accessor,
                                                   alpha_iterator, alpha_accessor);
                 break;
             case UNSIGNED_INT_32:
-                read_image_band_and_alpha<UInt32>(decoder.get(),
+                read_image_band_and_alpha<uint32_t>(decoder.get(),
                                                   image_iterator, image_accessor,
                                                   alpha_iterator, alpha_accessor);
                 break;
             case SIGNED_INT_16:
-                read_image_band_and_alpha<Int16>(decoder.get(),
+                read_image_band_and_alpha<int16_t>(decoder.get(),
                                                  image_iterator, image_accessor,
                                                  alpha_iterator, alpha_accessor);
                 break;
             case SIGNED_INT_32:
-                read_image_band_and_alpha<Int32>(decoder.get(),
+                read_image_band_and_alpha<int32_t>(decoder.get(),
                                                  image_iterator, image_accessor,
                                                  alpha_iterator, alpha_accessor);
                 break;
@@ -260,34 +265,34 @@ namespace vigra
         importImageAlpha(const ImageImportInfo& import_info,
                          ImageIterator image_iterator, ImageAccessor image_accessor,
                          AlphaIterator alpha_iterator, AlphaAccessor alpha_accessor,
-                         /* isScalar? */ VigraFalseType)
+                         /* isScalar? */ std::false_type)
         {
             VIGRA_UNIQUE_PTR<Decoder> decoder(vigra::decoder(import_info));
 
             switch (pixel_t_of_string(decoder->getPixelType()))
             {
             case UNSIGNED_INT_8:
-                read_image_bands_and_alpha<UInt8>(decoder.get(),
+                read_image_bands_and_alpha<uint8_t>(decoder.get(),
                                                   image_iterator, image_accessor,
                                                   alpha_iterator, alpha_accessor);
                 break;
             case UNSIGNED_INT_16:
-                read_image_bands_and_alpha<UInt16>(decoder.get(),
+                read_image_bands_and_alpha<uint16_t>(decoder.get(),
                                                    image_iterator, image_accessor,
                                                    alpha_iterator, alpha_accessor);
                 break;
             case UNSIGNED_INT_32:
-                read_image_bands_and_alpha<UInt32>(decoder.get(),
+                read_image_bands_and_alpha<uint32_t>(decoder.get(),
                                                    image_iterator, image_accessor,
                                                    alpha_iterator, alpha_accessor);
                 break;
             case SIGNED_INT_16:
-                read_image_bands_and_alpha<Int16>(decoder.get(),
+                read_image_bands_and_alpha<int16_t>(decoder.get(),
                                                   image_iterator, image_accessor,
                                                   alpha_iterator, alpha_accessor);
                 break;
             case SIGNED_INT_32:
-                read_image_bands_and_alpha<Int32>(decoder.get(),
+                read_image_bands_and_alpha<int32_t>(decoder.get(),
                                                   image_iterator, image_accessor,
                                                   alpha_iterator, alpha_accessor);
                 break;
@@ -311,26 +316,25 @@ namespace vigra
 
 
     /**
-    
+
     \brief Read the image specified by the given \ref
-    vigra::ImageImportInfo object including its alpha channel. 
-    
+    vigra::ImageImportInfo object including its alpha channel.
+
     See \ref importImage() for more information.
-    
+
     <B>Declarations</B>
-    
+
     pass 2D array views:
     \code
     namespace vigra {
-        template <class T1, class S1,
-                  class T2, class S2>
+        template <class T1, class T2>
         void
         importImageAlpha(ImageImportInfo const & import_info,
-                         MultiArrayView<2, T1, S1> image,
-                         MultiArrayView<2, T2, S2> alpha);
+                         ArrayViewND<2,T1> image,
+                         ArrayViewND<2,T2> alpha);
     }
     \endcode
-    
+
     \deprecatedAPI{importImageAlpha}
     pass \ref ImageIterators and \ref DataAccessors :
     \code
@@ -350,19 +354,19 @@ namespace vigra
                       class AlphaIterator, class AlphaAccessor>
             void
             importImageAlpha(const ImageImportInfo& importInfo,
-                             const pair<ImageIterator, ImageAccessor>& image,
-                             const pair<AlphaIterator, AlphaAccessor>& alpha)
+                             const std::pair<ImageIterator, ImageAccessor>& image,
+                             const std::pair<AlphaIterator, AlphaAccessor>& alpha)
         }
     \endcode
     \deprecatedEnd
-    
+
     <b> Usage:</b>
-    
+
     <B>\#include</B> \<vigra/impexalpha.hxx\><br/>
     Namespace: vigra
 
     \code
-    typedef UInt8 value_t;
+    typedef uint8_t value_t;
     ImageImportInfo info("zorro.tif");
 
     if (info.isGrayscale())
@@ -385,7 +389,7 @@ namespace vigra
 
     \deprecatedUsage{importImageAlpha}
     \code
-    typedef UInt8 value_t;
+    typedef uint8_t value_t;
     ImageImportInfo info("zorro.tif");
 
     if (info.isGrayscale())
@@ -410,9 +414,9 @@ namespace vigra
     }
     \endcode
     \deprecatedEnd
-    
+
     <B>Preconditions</B>
-    
+
     - The same preconditions hold as for importImage(), however the
       only image formats that support alpha channels are
       + TIFF and
@@ -445,20 +449,19 @@ namespace vigra
               class AlphaIterator, class AlphaAccessor>
     inline void
     importImageAlpha(ImageImportInfo const & import_info,
-                     pair<ImageIterator, ImageAccessor> image,
-                     pair<AlphaIterator, AlphaAccessor> alpha)
+                     std::pair<ImageIterator, ImageAccessor> image,
+                     std::pair<AlphaIterator, AlphaAccessor> alpha)
     {
         importImageAlpha(import_info,
                          image.first, image.second,
                          alpha.first, alpha.second);
     }
 
-    template <class T1, class S1,
-              class T2, class S2>
+    template <class T1, class T2>
     inline void
     importImageAlpha(ImageImportInfo const & import_info,
-                     MultiArrayView<2, T1, S1> image,
-                     MultiArrayView<2, T2, S2> alpha)
+                    ArrayViewND<2, T1> image,
+                     ArrayViewND<2, T2> alpha)
     {
         vigra_precondition(import_info.shape() == image.shape() && import_info.shape() == alpha.shape(),
             "importImageAlpha(): shape mismatch between input and output.");
@@ -654,7 +657,7 @@ namespace vigra
         exportImageAlpha(ImageIterator image_upper_left, ImageIterator image_lower_right, ImageAccessor image_accessor,
                          AlphaIterator alpha_upper_left, AlphaAccessor alpha_accessor,
                          const ImageExportInfo& export_info,
-                         /* isScalar? */ VigraTrueType)
+                         /* isScalar? */ std::true_type)
         {
             typedef typename ImageAccessor::value_type ImageValueType;
 
@@ -684,27 +687,27 @@ namespace vigra
                 switch (type)
                 {
                 case UNSIGNED_INT_8:
-                    write_image_band_and_alpha<UInt8>(encoder.get(),
+                    write_image_band_and_alpha<uint8_t>(encoder.get(),
                                                       image_upper_left, image_lower_right, image_accessor, image_rescaler,
                                                       alpha_upper_left, alpha_accessor, alpha_rescaler);
                     break;
                 case UNSIGNED_INT_16:
-                    write_image_band_and_alpha<UInt16>(encoder.get(),
+                    write_image_band_and_alpha<uint16_t>(encoder.get(),
                                                        image_upper_left, image_lower_right, image_accessor, image_rescaler,
                                                        alpha_upper_left, alpha_accessor, alpha_rescaler);
                     break;
                 case UNSIGNED_INT_32:
-                    write_image_band_and_alpha<UInt32>(encoder.get(),
+                    write_image_band_and_alpha<uint32_t>(encoder.get(),
                                                        image_upper_left, image_lower_right, image_accessor, image_rescaler,
                                                        alpha_upper_left, alpha_accessor, alpha_rescaler);
                     break;
                 case SIGNED_INT_16:
-                    write_image_band_and_alpha<Int16>(encoder.get(),
+                    write_image_band_and_alpha<int16_t>(encoder.get(),
                                                       image_upper_left, image_lower_right, image_accessor, image_rescaler,
                                                       alpha_upper_left, alpha_accessor, alpha_rescaler);
                     break;
                 case SIGNED_INT_32:
-                    write_image_band_and_alpha<Int32>(encoder.get(),
+                    write_image_band_and_alpha<int32_t>(encoder.get(),
                                                       image_upper_left, image_lower_right, image_accessor, image_rescaler,
                                                       alpha_upper_left, alpha_accessor, alpha_rescaler);
                     break;
@@ -727,27 +730,27 @@ namespace vigra
                 switch (type)
                 {
                 case UNSIGNED_INT_8:
-                    write_image_band_and_alpha<UInt8>(encoder.get(),
+                    write_image_band_and_alpha<uint8_t>(encoder.get(),
                                                       image_upper_left, image_lower_right, image_accessor, identity(),
                                                       alpha_upper_left, alpha_accessor, identity());
                     break;
                 case UNSIGNED_INT_16:
-                    write_image_band_and_alpha<UInt16>(encoder.get(),
+                    write_image_band_and_alpha<uint16_t>(encoder.get(),
                                                        image_upper_left, image_lower_right, image_accessor, identity(),
                                                        alpha_upper_left, alpha_accessor, identity());
                     break;
                 case UNSIGNED_INT_32:
-                    write_image_band_and_alpha<UInt32>(encoder.get(),
+                    write_image_band_and_alpha<uint32_t>(encoder.get(),
                                                        image_upper_left, image_lower_right, image_accessor, identity(),
                                                        alpha_upper_left, alpha_accessor, identity());
                     break;
                 case SIGNED_INT_16:
-                    write_image_band_and_alpha<Int16>(encoder.get(),
+                    write_image_band_and_alpha<int16_t>(encoder.get(),
                                                       image_upper_left, image_lower_right, image_accessor, identity(),
                                                       alpha_upper_left, alpha_accessor, identity());
                     break;
                 case SIGNED_INT_32:
-                    write_image_band_and_alpha<Int32>(encoder.get(),
+                    write_image_band_and_alpha<int32_t>(encoder.get(),
                                                       image_upper_left, image_lower_right, image_accessor, identity(),
                                                       alpha_upper_left, alpha_accessor, identity());
                     break;
@@ -776,7 +779,7 @@ namespace vigra
         exportImageAlpha(ImageIterator image_upper_left, ImageIterator image_lower_right, ImageAccessor image_accessor,
                          AlphaIterator alpha_upper_left, AlphaAccessor alpha_accessor,
                          const ImageExportInfo& export_info,
-                         /* isScalar? */ VigraFalseType)
+                         /* isScalar? */ std::false_type)
         {
             typedef typename ImageAccessor::value_type ImageBaseType;
             typedef typename ImageBaseType::value_type ImageValueType;
@@ -810,27 +813,27 @@ namespace vigra
                 switch (type)
                 {
                 case UNSIGNED_INT_8:
-                    write_image_bands_and_alpha<UInt8>(encoder.get(),
+                    write_image_bands_and_alpha<uint8_t>(encoder.get(),
                                                        image_upper_left, image_lower_right, image_accessor, image_rescaler,
                                                        alpha_upper_left, alpha_accessor, alpha_rescaler);
                     break;
                 case UNSIGNED_INT_16:
-                    write_image_bands_and_alpha<UInt16>(encoder.get(),
+                    write_image_bands_and_alpha<uint16_t>(encoder.get(),
                                                         image_upper_left, image_lower_right, image_accessor, image_rescaler,
                                                         alpha_upper_left, alpha_accessor, alpha_rescaler);
                     break;
                 case UNSIGNED_INT_32:
-                    write_image_bands_and_alpha<UInt32>(encoder.get(),
+                    write_image_bands_and_alpha<uint32_t>(encoder.get(),
                                                         image_upper_left, image_lower_right, image_accessor, image_rescaler,
                                                         alpha_upper_left, alpha_accessor, alpha_rescaler);
                     break;
                 case SIGNED_INT_16:
-                    write_image_bands_and_alpha<Int16>(encoder.get(),
+                    write_image_bands_and_alpha<int16_t>(encoder.get(),
                                                        image_upper_left, image_lower_right, image_accessor, image_rescaler,
                                                        alpha_upper_left, alpha_accessor, alpha_rescaler);
                     break;
                 case SIGNED_INT_32:
-                    write_image_bands_and_alpha<Int32>(encoder.get(),
+                    write_image_bands_and_alpha<int32_t>(encoder.get(),
                                                        image_upper_left, image_lower_right, image_accessor, image_rescaler,
                                                        alpha_upper_left, alpha_accessor, alpha_rescaler);
                     break;
@@ -853,27 +856,27 @@ namespace vigra
                 switch (type)
                 {
                 case UNSIGNED_INT_8:
-                    write_image_bands_and_alpha<UInt8>(encoder.get(),
+                    write_image_bands_and_alpha<uint8_t>(encoder.get(),
                                                        image_upper_left, image_lower_right, image_accessor, identity(),
                                                        alpha_upper_left, alpha_accessor, identity());
                     break;
                 case UNSIGNED_INT_16:
-                    write_image_bands_and_alpha<UInt16>(encoder.get(),
+                    write_image_bands_and_alpha<uint16_t>(encoder.get(),
                                                         image_upper_left, image_lower_right, image_accessor, identity(),
                                                         alpha_upper_left, alpha_accessor, identity());
                     break;
                 case UNSIGNED_INT_32:
-                    write_image_bands_and_alpha<UInt32>(encoder.get(),
+                    write_image_bands_and_alpha<uint32_t>(encoder.get(),
                                                         image_upper_left, image_lower_right, image_accessor, identity(),
                                                         alpha_upper_left, alpha_accessor, identity());
                     break;
                 case SIGNED_INT_16:
-                    write_image_bands_and_alpha<Int16>(encoder.get(),
+                    write_image_bands_and_alpha<int16_t>(encoder.get(),
                                                        image_upper_left, image_lower_right, image_accessor, identity(),
                                                        alpha_upper_left, alpha_accessor, identity());
                     break;
                 case SIGNED_INT_32:
-                    write_image_bands_and_alpha<Int32>(encoder.get(),
+                    write_image_bands_and_alpha<int32_t>(encoder.get(),
                                                        image_upper_left, image_lower_right, image_accessor, identity(),
                                                        alpha_upper_left, alpha_accessor, identity());
                     break;
@@ -899,37 +902,34 @@ namespace vigra
 
     /**
     \brief Write the image and its alpha channel to a file.
-    
+
     See \ref exportImage() for more information.
-    
+
     <B>Declarations</B>
-    
+
     pass 2D array views:
     \code
     namespace vigra {
-        template <class T1, class S1,
-                  class T2, class S2>
+        template <class T1, class T2>
         void
-        exportImageAlpha(MultiArrayView<2, T1, S1> const & image,
-                         MultiArrayView<2, T2, S2> const & alpha,
+        exportImageAlpha(ArrayViewND<2,T1> const & image,
+                         ArrayViewND<2,T2> const & alpha,
                          ImageExportInfo const & export_info);
 
-        template <class T1, class S1,
-                  class T2, class S2>
+        template <class T1, class T2>
         void
-        exportImageAlpha(MultiArrayView<2, T1, S1> const & image,
-                         MultiArrayView<2, T2, S2> const & alpha,
+        exportImageAlpha(ArrayViewND<2,T1> const & image,
+                         ArrayViewND<2,T2> const & alpha,
                          char const * filename)
 
-        template <class T1, class S1,
-                  class T2, class S2>
+        template <class T1, class T2>
         void
-        exportImageAlpha(MultiArrayView<2, T1, S1> const & image,
-                         MultiArrayView<2, T2, S2> const & alpha,
+        exportImageAlpha(ArrayViewND<2,T1> const & image,
+                         ArrayViewND<2,T2> const & alpha,
                          std::string const & filename)
     }
     \endcode
-    
+
     \deprecatedAPI{exportImageAlpha}
     pass \ref ImageIterators and \ref DataAccessors :
     \code
@@ -948,36 +948,36 @@ namespace vigra
         template <class ImageIterator, class ImageAccessor,
                   class AlphaIterator, class AlphaAccessor>
         void
-        exportImageAlpha(const triple<ImageIterator, ImageIterator, ImageAccessor>& image,
-                         const pair<AlphaIterator, AlphaAccessor>& alpha,
+        exportImageAlpha(const std::tuple<ImageIterator, ImageIterator, ImageAccessor>& image,
+                         const std::pair<AlphaIterator, AlphaAccessor>& alpha,
                          const ImageExportInfo& exportInfo)
         }
     \endcode
     \deprecatedEnd
-    
+
     <b> Usage:</b>
-    
+
     <B>\#include</B> \<vigra/impexalpha.hxx\><br/>
     Namespace: vigra
-    
+
     \code
-    typedef UInt8 value_t;
+    typedef uint8_t value_t;
 
     MultiArray<2, value_t>            alpha(width, height);
     MultiArray<2, RGBValue<value_t> > image(width, height);
 
    ... // do some image processing
 
-    // specify the output filename 
+    // specify the output filename
     exportImageAlpha(image, alpha, "zorro.tif");
-    
+
     // use a ImageExportInfo if you need more control over the export
     exportImageAlpha(image, alpha, ImageExportInfo("zorro.tif").setPixelType("FLOAT"));
    \endcode
 
     \deprecatedUsage{exportImageAlpha}
     \code
-    typedef UInt8 value_t;
+    typedef uint8_t value_t;
     ImageExportInfo info("zorro.tif");
 
     if (info.isGrayscale())
@@ -1004,9 +1004,9 @@ namespace vigra
     }
     \endcode
     \deprecatedEnd
-    
+
     <B>Preconditions</B>
-    
+
     - The same preconditions hold as for exportImage(), however the
       only image formats that support alpha channels are
       + TIFF and
@@ -1051,8 +1051,8 @@ namespace vigra
     template <class ImageIterator, class ImageAccessor,
               class AlphaIterator, class AlphaAccessor>
     inline void
-    exportImageAlpha(triple<ImageIterator, ImageIterator, ImageAccessor> image,
-                     pair<AlphaIterator, AlphaAccessor> alpha,
+    exportImageAlpha(std::tuple<ImageIterator, ImageIterator, ImageAccessor> image,
+                     std::pair<AlphaIterator, AlphaAccessor> alpha,
                      ImageExportInfo const & export_info)
     {
         exportImageAlpha(image.first, image.second, image.third,
@@ -1060,11 +1060,10 @@ namespace vigra
                          export_info);
     }
 
-    template <class T1, class S1,
-              class T2, class S2>
+    template <class T1, class T2>
     inline void
-    exportImageAlpha(MultiArrayView<2, T1, S1> const & image,
-                     MultiArrayView<2, T2, S2> const & alpha,
+    exportImageAlpha(ArrayViewND<2,T1> const & image,
+                     ArrayViewND<2,T2> const & alpha,
                      ImageExportInfo const & export_info)
     {
         exportImageAlpha(srcImageRange(image),
@@ -1072,11 +1071,10 @@ namespace vigra
                          export_info);
     }
 
-    template <class T1, class S1,
-              class T2, class S2>
+    template <class T1, class T2>
     inline void
-    exportImageAlpha(MultiArrayView<2, T1, S1> const & image,
-                     MultiArrayView<2, T2, S2> const & alpha,
+    exportImageAlpha(ArrayViewND<2,T1> const & image,
+                     ArrayViewND<2,T2> const & alpha,
                      char const * name)
     {
         ImageExportInfo export_info(name);
@@ -1085,11 +1083,10 @@ namespace vigra
                          export_info);
     }
 
-    template <class T1, class S1,
-              class T2, class S2>
+    template <class T1, class T2>
     inline void
-    exportImageAlpha(MultiArrayView<2, T1, S1> const & image,
-                     MultiArrayView<2, T2, S2> const & alpha,
+    exportImageAlpha(ArrayViewND<2,T1> const & image,
+                     ArrayViewND<2,T2> const & alpha,
                      std::string const & name)
     {
         ImageExportInfo export_info(name.c_str());
@@ -1099,7 +1096,7 @@ namespace vigra
     }
 
 /** @} */
-    
+
 } // end namespace vigra
 
 #endif // VIGRA_IMPEXALPHA_HXX

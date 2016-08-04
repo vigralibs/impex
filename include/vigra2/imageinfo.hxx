@@ -470,7 +470,7 @@ class ImageImportInfo
 
         /** Get size of the image in a form compatible to MultiArray.
          **/
-    VIGRA_EXPORT Shape<2> shape() const;
+    VIGRA_EXPORT Shape<2> shape(MemoryOrder order = C_ORDER) const;
 
         /** Returns true if the image is gray scale.
          **/

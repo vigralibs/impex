@@ -644,9 +644,12 @@ Shape<2> ImageImportInfo::size() const
     return Shape<2>( m_width, m_height );
 }
 
-Shape<2> ImageImportInfo::shape() const
+Shape<2> ImageImportInfo::shape(MemoryOrder order) const
 {
-    return Shape<2>( m_width, m_height );
+    if (order == C_ORDER)
+        return Shape<2>( m_height, m_width );
+    else
+        return Shape<2>( m_width, m_height );
 }
 
 bool ImageImportInfo::isGrayscale() const

@@ -785,7 +785,7 @@ namespace {
     {
         // color depth
         vigra_precondition( components == 1 || components == 3,
-                            "number of bands is not supported" );
+                            "exportImage(): file format does not support requested number of bands (color channels)" );
     }
 
     void GIFEncoderImpl::writeHeader()

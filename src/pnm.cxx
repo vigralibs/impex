@@ -609,7 +609,7 @@ namespace vigra {
             // pixmap
             pimpl->stream << (pimpl->raw ? "6" : "3");
         } else
-            vigra_precondition( false, "number of bands is not supported" );
+            vigra_precondition( false, "exportImage(): file format does not support requested number of bands (color channels)" );
         pimpl->stream << "\n";
 
         // write advertisement

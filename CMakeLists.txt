@@ -69,4 +69,5 @@ endif()
 #  $<INSTALL_INTERFACE:include>)
 
 #install(DIRECTORY include/ DESTINATION include)
-#add_subdirectory(test)
+
+add_subdirectory(test)

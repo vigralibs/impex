@@ -1070,7 +1070,7 @@ void BmpEncoder::setNumBands( unsigned int bands )
 {
     VIGRA_IMPEX_FINALIZED(pimpl->finalized);
     vigra_precondition( ( bands == 1 ) || ( bands == 3 ),
-                        "bmp supports only rgb and grayscale images" );
+                        "exportImage(): file format does not support requested number of bands (color channels)" );
     pimpl->grayscale = ( bands == 1 );
 }
 
