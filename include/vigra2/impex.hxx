@@ -48,6 +48,7 @@
 #ifndef VIGRA_IMPEX_HXX
 #define VIGRA_IMPEX_HXX
 
+#include <vigra2/config.hxx>
 #include <vigra2/shape.hxx>
 #include <vigra2/sized_int.hxx>
 #include <vigra2/array_nd.hxx>
@@ -477,15 +478,15 @@ namespace vigra
 
             using value_type = typename std::decay<typename decltype(ca)::value_type>::type;
 
-            std::string pixel_type(export_info.getPixelType());
-            const bool downcast(negotiatePixelType(encoder->getFileType(), TypeAsString<value_type>::result(),
-                pixel_type));
-            const pixel_t type(pixel_t_of_string(pixel_type));
+            std::string pixel_type = export_info.getPixelType();
+            const bool downcast    = negotiatePixelType(encoder->getFileType(), 
+                                                        TypeAsString<value_type>::result(), pixel_type);
+            const pixel_t type     = pixel_t_of_string(pixel_type);
 
             encoder->setPixelType(pixel_type);
 
-            const range_t image_source_range(find_source_value_range(export_info, ca));
-            const range_t destination_range(find_destination_value_range(export_info, type));
+            const range_t image_source_range = find_source_value_range(export_info, ca);
+            const range_t destination_range  = find_destination_value_range(export_info, type);
 
             if ((downcast || export_info.hasForcedRangeMapping()) &&
                 (image_source_range.first != destination_range.first || image_source_range.second != destination_range.second))
