@@ -183,6 +183,10 @@ int VIGRA_RGBE_ReadHeader(FILE *fp, int *width, int *height, vigra_rgbe_header_i
       return rgbe_error(rgbe_read_error,NULL);
   }
 
+#ifdef _MSC_VER
+#define sscanf sscanf_s
+#endif
+
   for(;;) {
     if ((buf[0] == 0)||(buf[0] == '\n'))
       return rgbe_error(rgbe_format_error,"no FORMAT specifier found");

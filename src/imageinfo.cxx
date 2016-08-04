@@ -67,7 +67,7 @@
 #include <vigra2/sifImport.hxx>
 
 #if defined(_MSC_VER)
-#  include "vigra/windows.h"
+#  include <vigra2/windows.h>
 #  include <io.h>
 #else
 #  include <dirent.h>

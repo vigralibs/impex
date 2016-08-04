@@ -11,6 +11,7 @@ vigra_add_external(vigra_core REPO https://github.com/vigralibs/vigra_core.git)
 
 option(ENABLE_PNG "Build with PNG support.")
 option(ENABLE_OPENEXR "Build with OpenEXR support.")
+option(VIGRA_IMAGEIO_STATIC_LIB "Build a static lib." OFF)
 
 if(ENABLE_PNG)
   find_package(PNG REQUIRED)
@@ -20,7 +21,13 @@ if(ENABLE_OPENEXR)
   find_package(OpenEXR REQUIRED)
 endif()
 
-add_library(vigra_imageio
+IF(VIGRA_IMAGEIO_STATIC_LIB)
+    SET(LIBTYPE STATIC)
+ELSE()
+    SET(LIBTYPE SHARED)
+ENDIF()
+
+add_library(vigra_imageio ${LIBTYPE}
     src/bmp.cxx
     src/byteorder.cxx
     src/codecmanager.cxx
@@ -50,6 +57,23 @@ target_include_directories(vigra_imageio PUBLIC
     PRIVATE src)
 
 target_link_libraries(vigra_imageio PUBLIC vigra_core)
+
+if(MSVC)
+  if(VIGRA_IMAGEIO_STATIC_LIB)
+    target_compile_definitions(vigra_imageio PUBLIC VIGRA_STATIC_LIB)
+  else()
+    target_compile_definitions(vigra_imageio PRIVATE VIGRA_DLL)
+  endif()
+endif()
+
+# set(SOVERSION 11)  # increment this after changing the vigraimpex library
+# IF(MACOSX)
+    # SET_TARGET_PROPERTIES(vigraimpex PROPERTIES VERSION ${SOVERSION}.${vigra_version}
+                         # SOVERSION ${SOVERSION} INSTALL_NAME_DIR "${CMAKE_INSTALL_PREFIX}/lib${LIB_SUFFIX}")
+# ELSE()
+    # SET_TARGET_PROPERTIES(vigraimpex PROPERTIES VERSION ${SOVERSION}.${vigra_version} SOVERSION ${SOVERSION})
+# ENDIF()
+MESSAGE(STATUS "FIXME: we must add the SO version if we build a shared library")
 
 if(ENABLE_PNG)
   target_compile_definitions(vigra_imageio PRIVATE HasPNG)
