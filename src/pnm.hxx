@@ -36,7 +36,7 @@
 #ifndef VIGRA_IMPEX_PNM_HXX
 #define VIGRA_IMPEX_PNM_HXX
 
-#include <vigra2/codec.hxx>
+#include <vigra2/imageio/codec.hxx>
 
 // PNM - Portable Network Graphics
 

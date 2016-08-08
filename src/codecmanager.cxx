@@ -40,7 +40,7 @@
 #include <iostream>
 #endif
 
-#include <vigra2/codec.hxx>
+#include <vigra2/imageio/codec.hxx>
 #include <vigra2/config.hxx>
 #include <vigra2/error.hxx>
 

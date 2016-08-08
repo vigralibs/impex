@@ -54,7 +54,7 @@
 
 
 
-#include <vigra2/sifImport.hxx>
+#include <vigra2/imageio/sifImport.hxx>
 #include <vigra2/utilities.hxx>
 #include "byteorder.hxx"
 

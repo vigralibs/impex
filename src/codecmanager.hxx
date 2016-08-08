@@ -39,7 +39,7 @@
 #include <map>
 #include <memory>
 
-#include <vigra2/codec.hxx>
+#include <vigra2/imageio/codec.hxx>
 
 namespace vigra
 {

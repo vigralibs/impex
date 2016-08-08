@@ -59,12 +59,12 @@
 #include <string.h>
 #include <ctype.h>
 
-#include <vigra2/imageinfo.hxx>
+#include <vigra2/imageio/imageinfo.hxx>
 #include <vigra2/shape.hxx>
 #include "codecmanager.hxx"
 
-#include <vigra2/multi_impex.hxx>
-#include <vigra2/sifImport.hxx>
+#include <vigra2/imageio/multi_impex.hxx>
+#include <vigra2/imageio/sifImport.hxx>
 
 #if defined(_MSC_VER)
 #  include <vigra2/windows.h>

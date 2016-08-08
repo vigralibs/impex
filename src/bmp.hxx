@@ -36,7 +36,7 @@
 #ifndef VIGRA_IMPEX_BMP_HXX
 #define VIGRA_IMPEX_BMP_HXX
 
-#include <vigra2/codec.hxx>
+#include <vigra2/imageio/codec.hxx>
 
 // Windows Bitmap 3.0
 

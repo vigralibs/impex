@@ -56,7 +56,7 @@
 #include <vigra2/error.hxx>
 #include <vigra2/shape.hxx>
 #include <vigra2/iterator_nd.hxx>
-#include <vigra2/codec.hxx>
+#include <vigra2/imageio/codec.hxx>
 
 namespace vigra
 {

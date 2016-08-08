@@ -36,7 +36,7 @@
 #ifndef VIGRA_IMPEX_GIF_HXX
 #define VIGRA_IMPEX_GIF_HXX
 
-#include <vigra2/codec.hxx>
+#include <vigra2/imageio/codec.hxx>
 
 // GIF format
 

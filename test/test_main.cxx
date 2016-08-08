@@ -38,7 +38,7 @@
 #include <cstdlib>
 #include <cstring>
 
-#include <vigra2/impex.hxx>
+#include <vigra2/imageio/impex.hxx>
 //#include <vigra2/impexalpha.hxx>
 #include <vigra2/unittest.hxx>
 #include <vigra2/array_nd.hxx>

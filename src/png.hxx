@@ -46,7 +46,7 @@
 #ifndef VIGRA_IMPEX_PNG_HXX
 #define VIGRA_IMPEX_PNG_HXX
 
-#include <vigra2/codec.hxx>
+#include <vigra2/imageio/codec.hxx>
 
 // PNG - Portable Network Graphics
 

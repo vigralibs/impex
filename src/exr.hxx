@@ -37,7 +37,7 @@
 #ifndef VIGRA_IMPEX_EXR_HXX
 #define VIGRA_IMPEX_EXR_HXX
 
-#include <vigra2/codec.hxx>
+#include <vigra2/imageio/codec.hxx>
 
 // EXR - OpenEXR
 

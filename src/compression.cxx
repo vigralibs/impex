@@ -36,7 +36,7 @@
 #include <algorithm>
 #include <vector>
 
-#include <vigra2/compression.hxx>
+#include <vigra2/imageio/compression.hxx>
 
 #include "lz4.h"
 

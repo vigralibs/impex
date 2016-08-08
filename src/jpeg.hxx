@@ -37,7 +37,7 @@
 #define VIGRA_IMPEX_JPEG_HXX
 
 #include <vector>
-#include <vigra2/codec.hxx>
+#include <vigra2/imageio/codec.hxx>
 
 namespace vigra {
 
