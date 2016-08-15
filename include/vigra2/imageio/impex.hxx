@@ -479,11 +479,14 @@ namespace vigra
             using value_type = typename std::decay<typename decltype(ca)::value_type>::type;
 
             std::string pixel_type = export_info.getPixelType();
-            const bool downcast    = negotiatePixelType(encoder->getFileType(), 
+            const bool downcast    = negotiatePixelType(encoder->getFileType(),
                                                         TypeAsString<value_type>::result(), pixel_type);
             const pixel_t type     = pixel_t_of_string(pixel_type);
 
             encoder->setPixelType(pixel_type);
+
+            vigra_precondition(isBandNumberSupported(encoder->getFileType(), channels),
+                               "exportImage(): file format does not support requested number of bands (color channels)");
 
             const range_t image_source_range = find_source_value_range(export_info, ca);
             const range_t destination_range  = find_destination_value_range(export_info, type);
@@ -841,29 +844,70 @@ namespace vigra
     importImage(ImageImportInfo const & import_info,
                 ArrayViewND<2, T> image)
     {
-        // TODO get the memory order from image also considering axistags,
-        // if available.
-        vigra_precondition(import_info.shape() == image.shape(),
+        bool nontrivial_axistags = nontrivialAxisTags(image.axistags());
+        vigra_precondition(nontrivial_axistags || image.axistags() == tags::axis_unknown,"importImage(): inconsistent axistags.");
+        const auto p = nontrivial_axistags
+            ? detail::permutationToOrder(image.axistags(),C_ORDER)
+            : detail::permutationToOrder(image.strides(),C_ORDER);
+        auto view = image.transpose(p);
+        vigra_precondition(import_info.shape() == view.shape(),
             "importImage(): shape mismatch between input and output.");
-        detail::importImage(import_info, image);
+        detail::importImage(import_info, view);
+    }
+
+    template <class T>
+    inline void
+    importImage(ImageImportInfo const & import_info,
+                ArrayViewND<3, T> image)
+    {
+        vigra_precondition(image.hasChannelAxis(), "importImage(): channel axis must be marked.");
+        bool nontrivial_axistags = nontrivialAxisTags(image.axistags());
+        vigra_precondition(nontrivial_axistags || channelOnlyAxisTags(image.axistags()),"importImage(): inconsistent axistags.");
+        const auto p = nontrivial_axistags
+            ? detail::permutationToOrder(image.axistags(),C_ORDER)
+            : detail::permutationToOrder(image.strides(),C_ORDER);
+        auto view = image.transpose(p);
+        vigra_precondition(import_info.shape() == view.shape().erase(view.channelAxis()),
+            "importImage(): shape mismatch between input and output.");
+        detail::importImage(import_info, view);
     }
 
     template <class T, class A>
     inline void
-    importImage(char const * name,
-                ArrayND<2, T, A> & image)
+    importImage(ImageImportInfo const & info,
+                ArrayND<2, T, A> & image,
+                MemoryOrder order = C_ORDER)
     {
-        ImageImportInfo info(name);
-        image.resize(info.shape());
-        detail::importImage(info, image);
+        image.resize(info.shape(order),defaultAxistags(2, false, order));
+        importImage(info, image.view());
     }
 
     template <class T, class A>
     inline void
     importImage(std::string const & name,
-                ArrayND<2, T, A> & image)
+                ArrayND<2, T, A> & image,
+                MemoryOrder order = C_ORDER)
     {
-        importImage(name.c_str(), image);
+        importImage(ImageImportInfo(name.c_str()), image, order);
+    }
+
+    template <class T, class A>
+    inline void
+    importImage(ImageImportInfo const & info,
+                ArrayND<3, T, A> & image,
+                MemoryOrder order = C_ORDER)
+    {
+        image.resize(info.shape(order).insert(order==C_ORDER ? 2 : 0, info.numBands()),defaultAxistags(3, true, order));
+        importImage(info, image.view());
+    }
+
+    template <class T, class A>
+    inline void
+    importImage(std::string const & name,
+                ArrayND<3, T, A> & image,
+                MemoryOrder order = C_ORDER)
+    {
+        importImage(ImageImportInfo(name.c_str()), image, order);
     }
 
     /** \brief Write an image to a file.

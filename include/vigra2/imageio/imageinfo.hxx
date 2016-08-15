@@ -422,7 +422,7 @@ class ImageImportInfo
             The parameter \a page can be used in conjunction with multi-page TIFF
             files in order to specify the desired page (i.e. image) in the file.
          **/
-    VIGRA_EXPORT ImageImportInfo( const char * filename, unsigned int page = 0 );
+    explicit VIGRA_EXPORT ImageImportInfo( const char * filename, unsigned int page = 0 );
     VIGRA_EXPORT ~ImageImportInfo();
 
     VIGRA_EXPORT const char * getFileName() const;

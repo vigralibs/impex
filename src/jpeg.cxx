@@ -42,7 +42,9 @@
 
 #include <stdexcept>
 #include <csetjmp>
-#include "vigra/config.hxx"
+#include <vigra2/config.hxx>
+#include <vigra2/sized_int.hxx>
+
 #include "void_vector.hxx"
 #include "error.hxx"
 #include "auto_file.hxx"
@@ -184,7 +186,7 @@ namespace vigra
         unsigned int width, height, components, scanline;
 
         // icc profile, if available
-        UInt32 iccProfileLength;
+        uint32_t iccProfileLength;
         const unsigned char *iccProfilePtr;
 
         // ctor, dtor
@@ -423,7 +425,7 @@ namespace vigra
         jpeg_start_compress( &info, TRUE );
 
         if (iccProfile.size()) {
-            write_icc_profile(&info, iccProfile.begin(), (unsigned int)iccProfile.size());
+            write_icc_profile(&info, iccProfile.data(), (unsigned int)iccProfile.size());
         }
     }
 

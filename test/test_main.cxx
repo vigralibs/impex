@@ -39,12 +39,15 @@
 #include <cstring>
 
 #include <vigra2/imageio/impex.hxx>
-//#include <vigra2/impexalpha.hxx>
+#include <vigra2/imageio/impexalpha.hxx>
 #include <vigra2/unittest.hxx>
 #include <vigra2/array_nd.hxx>
 
+// FIXME: is tiff.hxx still necessary?
+#if 0
 #if HasTIFF
-# include <vigra2/tiff.hxx>
+# include <vigra2/imageio/tiff.hxx>
+#endif
 #endif
 
 using namespace vigra;
@@ -185,7 +188,7 @@ public:
         failCodec(img, exportinfo);
 #else
         exportinfo.setCompression ("JPEG QUALITY=100");
-        exportImage (img), exportinfo;
+        exportImage (img, exportinfo);
 
         vigra::ImageImportInfo info ("res.jpg");
 
@@ -216,7 +219,7 @@ public:
         failCodec(img, exportinfo);
 #else
         exportinfo.setCompression ("LZW");
-        exportImage (img), exportinfo;
+        exportImage (img, exportinfo);
 
         vigra::ImageImportInfo info ("res.tif");
 
@@ -228,13 +231,15 @@ public:
         Image res (info.height (), info.width ());
 
         importImage (info, res);
+        shouldEqual(res.axistags(0),tags::axis_y);
+        shouldEqual(res.axistags(1),tags::axis_x);
 
         auto i = img.begin ();
         auto i1 = res.begin ();
 
         for (; i != img.end (); ++i, ++i1)
             should (*i == *i1);
-
+#if 0
         TiffImage * tiff = TIFFOpen("res2.tif", "w");
         createTiffImage(View(img), tiff);
         TIFFClose(tiff);
@@ -261,6 +266,7 @@ public:
         shouldEqual(m, 0);
         shouldEqual(M, 1);
         shouldEqual(bilevel.sum<int>(), 1653050); // 96% white pixels
+#endif
 
 #endif
     }
@@ -275,7 +281,7 @@ public:
             Image inimg(ininfo.width(), ininfo.height());
             importImage(ininfo, inimg);
             vigra::ImageExportInfo outinfo ("resseq.tif", i==0?"w":"a");
-            exportImage(inimg), outinfo;
+            exportImage(inimg, outinfo);
         }
 
         for (int j=0; j < 3; ++j)
@@ -441,6 +447,7 @@ public:
 
         importImage (info, res);
         importImage (vigra::ImageImportInfo("lenna_gifref.xv"), ref);
+        shouldEqual(res.axistags(), AxisTags<2>(tags::axis_y, tags::axis_x));
 
         auto i = ref.begin ();
         auto i1 = res.begin ();
@@ -451,6 +458,38 @@ public:
 
         should (sum / (info.width () * info.height ()) < 4.0);  // use rather large tolerance to make the
                                                                 // test portable
+        ref.expandElements(2) = 0;
+        importImage(info, ref.expandElements(2));
+        should(res == ref);
+
+        ArrayND<3, uint8_t> banded;
+        importImage(info, banded);
+        shouldEqual(banded.shape(), info.shape().insert(2, 3));
+        shouldEqual(banded.axistags(), AxisTags<3>(tags::axis_y, tags::axis_x, tags::axis_c));
+        should(banded == ref.expandElements(2));
+
+        importImage(info, banded, F_ORDER);
+        shouldEqual(banded.shape(), reversed(info.shape().insert(2, 3)));
+        shouldEqual(banded.axistags(), AxisTags<3>(tags::axis_c, tags::axis_x, tags::axis_y));
+        should(transpose(banded) == ref.expandElements(2));
+
+        Image noncontiguous1(reversed(info.shape()), AxisTags<2>(tags::axis_x, tags::axis_y));
+        importImage(info, noncontiguous1.view());
+        should(transpose(noncontiguous1) == res);
+
+        auto view1 = noncontiguous1.expandElements(0);
+        view1 = 0;
+        importImage(info, view1);
+        should(transpose(view1) == res.expandElements(2));
+
+        Image noncontiguous2(reversed(info.shape()), F_ORDER);
+        importImage(info, noncontiguous2.view());
+        should(transpose(noncontiguous2) == res);
+
+        auto view2 = noncontiguous2.expandElements(0);
+        view2 = 0;
+        importImage(info, view2);
+        should(transpose(view2) == res.expandElements(2));
     }
 
     void testJPEG ()
@@ -511,7 +550,7 @@ public:
             {
                 should (*i == *i1);
             }
-
+#if 0
         TiffImage * tiff = TIFFOpen("res2.tif", "w");
         createTiffImage(MultiArrayView<2, RGBValue<unsigned char> >(img), tiff);
         TIFFClose(tiff);
@@ -528,6 +567,7 @@ public:
         TIFFClose(tiff);
 
         shouldEqualSequence(res2.begin(), res2.end(), img.data());
+#endif
 #endif
     }
 
@@ -670,7 +710,7 @@ class PositionTest
     void testFile(const char* filename)
     {
         ImageExportInfo exportinfo(filename);
-        ArrayND<2,TinyArray<float,3> > img(Shape<2>{1, 1});
+        ArrayND<2,TinyArray<float,4> > img(Shape<2>{1, 1});
         img(0, 0) = 1;
 
         const Shape<2> position(0, 100);
@@ -815,8 +855,8 @@ public:
 
         vigra::ImageImportInfo info ("res.jpg");
 
-        should (info.width () == reread.width ());
-        should (info.height () == reread.height ());
+        should (info.width () == reread.shape (1));
+        should (info.height () == reread.shape (0));
         should (info.isGrayscale ());
         should (info.getPixelType () == std::string ("UINT8"));
 
@@ -1024,8 +1064,8 @@ public:
 
         vigra::ImageImportInfo info ("res.jpg");
 
-        should (info.width () == reread.width ());
-        should (info.height () == reread.height ());
+        should (info.width () == reread.shape (1));
+        should (info.height () == reread.shape (0));
         should (info.isColor ());
         should (info.getPixelType () == std::string ("UINT8"));
 
@@ -1094,9 +1134,10 @@ public:
 
         for (; i != img.end (); ++i, ++i1)
         {
-            shouldEqualTolerance(acc.red(i)/255.0f, acc.red(i1)-1.0f, 1e-4);
-            shouldEqualTolerance(acc.green(i)/255.0f, acc.green(i1)-1.0f, 1e-4);
-            shouldEqualTolerance(acc.blue(i)/255.0f, acc.blue(i1)-1.0f, 1e-4);
+            should(closeAtTolerance(*i/255.0f, *i1-1.0f, 1e-4));
+            // shouldEqualTolerance(acc.red(i)/255.0f, (*i1)[0]-1.0f, 1e-4);
+            // shouldEqualTolerance(acc.green(i)/255.0f, (*i1)[1]-1.0f, 1e-4);
+            // shouldEqualTolerance(acc.blue(i)/255.0f, (*i1)[2]-1.0f, 1e-4);
         }
 #endif
     }
@@ -1560,7 +1601,7 @@ public:
         ArrayND<2, TinyArray<uint8_t,3> > rgb(1,1);
 
         try {
-            importImage(ImageImportInfo("lennargb.xv"), rgb);
+            importImage(ImageImportInfo("lennargb.xv"), rgb.view());
             failTest( "Failed to throw exception." );
         }
         catch( vigra::ContractViolation & e ) {

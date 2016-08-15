@@ -11,6 +11,8 @@ vigra_add_external(vigra_core REPO https://github.com/vigralibs/vigra_core.git)
 
 option(ENABLE_PNG "Build with PNG support.")
 option(ENABLE_OPENEXR "Build with OpenEXR support.")
+option(ENABLE_JPEG "Build with JPEG support.")
+option(ENABLE_TIFF "Build with TIFF support.")
 option(VIGRA_IMAGEIO_STATIC_LIB "Build a static lib." OFF)
 
 if(ENABLE_PNG)
@@ -19,6 +21,21 @@ endif()
 
 if(ENABLE_OPENEXR)
   find_package(OpenEXR REQUIRED)
+endif()
+
+if(ENABLE_JPEG)
+  find_package(JPEG REQUIRED)
+  if(NOT TARGET JPEG::JPEG)
+      add_library(JPEG::JPEG UNKNOWN IMPORTED)
+      set_target_properties(JPEG::JPEG PROPERTIES
+          INTERFACE_INCLUDE_DIRECTORIES "${JPEG_INCLUDE_DIR}")
+      set_target_properties(JPEG::JPEG PROPERTIES
+        IMPORTED_LOCATION "${JPEG_LIBRARIES}")
+  endif()
+endif()
+
+if(ENABLE_TIFF)
+  find_package(TIFF REQUIRED)
 endif()
 
 IF(VIGRA_IMAGEIO_STATIC_LIB)
@@ -77,21 +94,24 @@ MESSAGE(STATUS "FIXME: we must add the SO version if we build a shared library")
 
 if(ENABLE_PNG)
   target_compile_definitions(vigra_imageio PRIVATE HasPNG)
-  target_link_libraries(vigra_imageio PRIVATE PNG::PNG)
+  target_link_libraries(vigra_imageio PUBLIC PNG::PNG)
 endif()
 
 if(ENABLE_OPENEXR)
   target_compile_definitions(vigra_imageio PRIVATE HasEXR)
-  target_link_libraries(vigra_imageio PRIVATE OpenEXR::OpenEXR)
+  target_link_libraries(vigra_imageio PUBLIC OpenEXR::OpenEXR)
 endif()
 
-#add_library(threadpool INTERFACE)
-#target_link_libraries(threadpool INTERFACE core INTERFACE Threads::Threads)
+if(ENABLE_JPEG)
+  target_compile_definitions(vigra_imageio PRIVATE HasJPEG)
+  target_link_libraries(vigra_imageio PUBLIC JPEG::JPEG)
+endif()
 
-#target_include_directories(threadpool INTERFACE
-#  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-#  $<INSTALL_INTERFACE:include>)
+if(ENABLE_JPEG)
+  target_compile_definitions(vigra_imageio PRIVATE HasTIFF)
+  target_link_libraries(vigra_imageio PUBLIC TIFF::TIFF)
+endif()
 
-#install(DIRECTORY include/ DESTINATION include)
+install(DIRECTORY include/ DESTINATION include)
 
 add_subdirectory(test)

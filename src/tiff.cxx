@@ -55,10 +55,11 @@
 // NB (jbeda): tiffio.h is going to include this anyway.  Let's include
 // it now so that we can control how it comes in.  Namely, we want
 // to get our version that doesn't set the evil min/max macros.
-#include "vigra/windows.h"
+#include <vigra2/windows.h>
 #endif
 
-#include "vigra/sized_int.hxx"
+#include <vigra2/shape.hxx>
+#include <vigra2/sized_int.hxx>
 #include "error.hxx"
 #include "tiff.hxx"
 #include <iostream>
@@ -77,16 +78,16 @@ static void vigraWarningHandler(char* module, char* fmt, va_list ap)
     static const std::string ignore("Unknown field with tag");
     if(ignore.compare(0, ignore.size(), fmt, ignore.size()) == 0)
         return;
-    
+
     if (module != NULL)
     {
         static const std::string ignore("TIFFFetchNormalTag");
         if(ignore.compare(module) == 0)
             return;
-            
+
         fprintf(stderr, "%s: ", module);
     }
-    
+
     fprintf(stderr, "Warning, ");
     vfprintf(stderr, fmt, ap);
     fprintf(stderr, ".\n");
@@ -187,13 +188,13 @@ namespace vigra {
         tdata_t * stripbuffer;
         tstrip_t strip;
 
-        uint32 stripindex, stripheight;
-        uint32 width, height;
-        uint16 samples_per_pixel, bits_per_sample,
+        uint32_t stripindex, stripheight;
+        uint32_t width, height;
+        uint16_t samples_per_pixel, bits_per_sample,
             photometric, planarconfig, fillorder, extra_samples_per_pixel;
         float x_resolution, y_resolution;
-        Diff2D position;
-        Size2D canvasSize;
+        Shape<2> position;
+        Shape<2> canvasSize;
 
         Decoder::ICCProfile iccProfile;
 
@@ -276,7 +277,7 @@ namespace vigra {
 
     std::string TIFFDecoderImpl::get_pixeltype_by_sampleformat() const
     {
-        uint16 sampleformat;
+        uint16_t sampleformat;
 
         if ( TIFFGetField( tiff, TIFFTAG_SAMPLEFORMAT, &sampleformat ) ) {
 
@@ -320,7 +321,7 @@ namespace vigra {
 
     std::string TIFFDecoderImpl::get_pixeltype_by_datatype() const
     {
-        uint16 datatype;
+        uint16_t datatype;
 
         if ( TIFFGetField( tiff, TIFFTAG_DATATYPE, &datatype ) ) {
             // dangelo: correct parsing of INT/UINT (given in tiff.h)
@@ -361,7 +362,7 @@ namespace vigra {
         TIFFGetField( tiff, TIFFTAG_IMAGELENGTH, &height );
 
         // check for tiled TIFFs
-        uint32 tileWidth, tileHeight;
+        uint32_t tileWidth, tileHeight;
         if( TIFFGetField( tiff, TIFFTAG_TILEWIDTH, &tileWidth ) &&
             TIFFGetField( tiff, TIFFTAG_TILELENGTH, &tileHeight ) )
             vigra_precondition( (tileWidth == width) && (tileHeight == height),
@@ -380,7 +381,7 @@ namespace vigra {
                         " A suitable default was not found." );
 
         // read extra samples (# of alpha channels)
-        uint16 *extra_sample_types=0;
+        uint16_t *extra_sample_types=0;
         if (TIFFGetField( tiff, TIFFTAG_EXTRASAMPLES,
                           &extra_samples_per_pixel, &extra_sample_types )!=1)
         {
@@ -421,7 +422,7 @@ namespace vigra {
                             " A suitable default was not found." );
             }
         }
-        
+
         // check photometric preconditions
         switch ( photometric )
         {
@@ -450,7 +451,7 @@ namespace vigra {
             case PHOTOMETRIC_LOGL:
             case PHOTOMETRIC_LOGLUV:
             {
-                uint16 tiffcomp;
+                uint16_t tiffcomp;
                 TIFFGetFieldDefaulted( tiff, TIFFTAG_COMPRESSION, &tiffcomp );
                 if (tiffcomp != COMPRESSION_SGILOG && tiffcomp != COMPRESSION_SGILOG24)
                     vigra_fail("TIFFDecoder:"
@@ -532,8 +533,8 @@ namespace vigra {
         }
 
         // other fields
-        uint16 u16value;
-        uint32 u32value;
+        uint16_t u16value;
+        uint32_t u32value;
         float unitLength = 1.0f;
         if (TIFFGetField( tiff, TIFFTAG_RESOLUTIONUNIT, &u16value )) {
             switch (u16value) {
@@ -563,29 +564,29 @@ namespace vigra {
         // XPosition
         if (TIFFGetField( tiff, TIFFTAG_XPOSITION, &fvalue )) {
             fvalue = fvalue * x_resolution;
-            position.x = (int)floor(fvalue + 0.5);
+            position[0] = (int)floor(fvalue + 0.5);
         }
         // YPosition
         if (TIFFGetField( tiff, TIFFTAG_YPOSITION, &fvalue )) {
             fvalue = fvalue * y_resolution;
-            position.y = (int)floor(fvalue + 0.5);
+            position[1] = (int)floor(fvalue + 0.5);
         }
 
         // canvas size
         if (TIFFGetField( tiff, TIFFTAG_PIXAR_IMAGEFULLWIDTH, &u32value )) {
-            canvasSize.x = u32value;
+            canvasSize[0] = u32value;
         }
         if (TIFFGetField( tiff, TIFFTAG_PIXAR_IMAGEFULLLENGTH, &u32value )) {
-            canvasSize.y = u32value;
+            canvasSize[1] = u32value;
         }
 
-        if ((uint32)canvasSize.x < position.x + width || (uint32)canvasSize.y < position.y + height)
+        if ((uint32_t)canvasSize[0] < position[0] + width || (uint32_t)canvasSize[1] < position[1] + height)
         {
-            canvasSize.x = canvasSize.y = 0;
+            canvasSize[0] = canvasSize[1] = 0;
         }
 
         // ICC Profile
-        UInt32 iccProfileLength = 0;
+        uint32_t iccProfileLength = 0;
         const unsigned char *iccProfilePtr = NULL;
         if(TIFFGetField(tiff, TIFFTAG_ICCPROFILE,
                         &iccProfileLength, &iccProfilePtr)
@@ -625,17 +626,17 @@ namespace vigra {
     {
         if ( bits_per_sample == 1 ) {
             const unsigned int n = TIFFScanlineSize(tiff);
-            UInt8 * const startpointer
-                = static_cast< UInt8 * >(stripbuffer[0]);
-            UInt8 * bytepointer = startpointer;
+            uint8_t * const startpointer
+                = static_cast< uint8_t * >(stripbuffer[0]);
+            uint8_t * bytepointer = startpointer;
 
             bytepointer += n-1;
             for (int byte = n-1 ; byte >= 0; --byte)
             {
-                UInt8 currentByte = *bytepointer;
+                uint8_t currentByte = *bytepointer;
                 --bytepointer;
 
-                UInt8 * bitpointer = startpointer;
+                uint8_t * bitpointer = startpointer;
                 bitpointer += byte * 8;
 
                 for (unsigned char bit = 7; bit < 8; --bit)
@@ -649,12 +650,12 @@ namespace vigra {
             return startpointer + ( stripindex * width ) / 8;
         } else {
             if ( planarconfig == PLANARCONFIG_SEPARATE ) {
-                UInt8 * const buf
-                    = static_cast< UInt8 * >(stripbuffer[band]);
+                uint8_t * const buf
+                    = static_cast< uint8_t * >(stripbuffer[band]);
                 return buf + ( stripindex * width ) * ( bits_per_sample / 8 );
             } else {
-                UInt8 * const buf
-                    = static_cast< UInt8 * >(stripbuffer[0]);
+                uint8_t * const buf
+                    = static_cast< uint8_t * >(stripbuffer[0]);
                 return buf + ( band + stripindex * width * samples_per_pixel )
                     * ( bits_per_sample / 8 );
             }
@@ -681,7 +682,7 @@ namespace vigra {
             if ( photometric == PHOTOMETRIC_MINISWHITE &&
                  samples_per_pixel == 1 && pixeltype == "UINT8" ) {
 
-                UInt8 * buf = static_cast< UInt8 * >(stripbuffer[0]);
+                uint8_t * buf = static_cast< uint8_t * >(stripbuffer[0]);
                 const unsigned int n = TIFFScanlineSize(tiff);
 
                 // invert every pixel
@@ -743,12 +744,12 @@ namespace vigra {
         return pimpl->getImageIndex();
     }
 
-    vigra::Diff2D TIFFDecoder::getPosition() const
+    vigra::Shape<2> TIFFDecoder::getPosition() const
     {
         return pimpl->position;
     }
 
-    vigra::Size2D TIFFDecoder::getCanvasSize() const
+    vigra::Shape<2> TIFFDecoder::getCanvasSize() const
     {
         return pimpl->canvasSize;
     }
@@ -847,7 +848,7 @@ namespace vigra {
         void * currentScanlineOfBand( unsigned int band ) const
         {
             const unsigned int atomicbytes = bits_per_sample >> 3;
-            UInt8 * buf = ( UInt8 * ) stripbuffer[0];
+            uint8_t * buf = ( uint8_t * ) stripbuffer[0];
             return buf + atomicbytes *
                 ( width * samples_per_pixel * stripindex + band );
         }
@@ -913,8 +914,8 @@ namespace vigra {
         // This will do a 1MB strip for 8-bit images,
         // 2MB strip for 16-bit, and so forth.
         unsigned int estimate =
-            (unsigned int)std::max(static_cast<UIntBiggest>(1),
-                                  (static_cast<UIntBiggest>(1)<<20) / (width * samples_per_pixel));
+            (unsigned int)std::max(static_cast<uintmax_t>(1),
+                                  (static_cast<uintmax_t>(1)<<20) / (width * samples_per_pixel));
         TIFFSetField( tiff, TIFFTAG_ROWSPERSTRIP,
                       stripheight = TIFFDefaultStripSize( tiff, estimate ) );
         TIFFSetField( tiff, TIFFTAG_SAMPLESPERPIXEL, samples_per_pixel );
@@ -953,7 +954,7 @@ namespace vigra {
         TIFFSetField( tiff, TIFFTAG_BITSPERSAMPLE, bits_per_sample );
 
        if (extra_samples_per_pixel > 0) {
-              uint16 * types = new  uint16[extra_samples_per_pixel];
+              uint16_t * types = new  uint16_t[extra_samples_per_pixel];
            for ( int i=0; i < extra_samples_per_pixel; i++ ) {
               types[i] = EXTRASAMPLE_UNASSALPHA;
             }
@@ -980,18 +981,18 @@ namespace vigra {
         }
 
         // save position, if available
-        if (position.x >= 0 && position.y >= 0 &&
+        if (position[0] >= 0 && position[1] >= 0 &&
             x_resolution > 0 && y_resolution > 0)
         {
-            TIFFSetField( tiff, TIFFTAG_XPOSITION, position.x / x_resolution);
-            TIFFSetField( tiff, TIFFTAG_YPOSITION, position.y / y_resolution);
+            TIFFSetField( tiff, TIFFTAG_XPOSITION, position[0] / x_resolution);
+            TIFFSetField( tiff, TIFFTAG_YPOSITION, position[1] / y_resolution);
         }
 
-        if ((uint32)canvasSize.x >= position.x + width
-            && (uint32)canvasSize.y >= position.y + height)
+        if ((uint32_t)canvasSize[0] >= position[0] + width
+            && (uint32_t)canvasSize[1] >= position[1] + height)
         {
-            TIFFSetField( tiff, TIFFTAG_PIXAR_IMAGEFULLWIDTH, canvasSize.x);
-            TIFFSetField( tiff, TIFFTAG_PIXAR_IMAGEFULLLENGTH, canvasSize.y);
+            TIFFSetField( tiff, TIFFTAG_PIXAR_IMAGEFULLWIDTH, canvasSize[0]);
+            TIFFSetField( tiff, TIFFTAG_PIXAR_IMAGEFULLLENGTH, canvasSize[1]);
         }
 
         // Set ICC profile, if available.
@@ -1056,13 +1057,13 @@ namespace vigra {
         pimpl->pixeltype = pixeltype;
     }
 
-    void TIFFEncoder::setPosition( const vigra::Diff2D & pos )
+    void TIFFEncoder::setPosition( const vigra::Shape<2> & pos )
     {
         VIGRA_IMPEX_FINALIZED(pimpl->finalized);
         pimpl->position = pos;
     }
 
-    void TIFFEncoder::setCanvasSize( const vigra::Size2D & size )
+    void TIFFEncoder::setCanvasSize( const vigra::Shape<2> & size )
     {
         VIGRA_IMPEX_FINALIZED(pimpl->finalized);
         pimpl->canvasSize = size;
