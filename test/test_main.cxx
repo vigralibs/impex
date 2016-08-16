@@ -38,8 +38,7 @@
 #include <cstdlib>
 #include <cstring>
 
-#include <vigra2/imageio/impex.hxx>
-#include <vigra2/imageio/impexalpha.hxx>
+#include <vigra2/imageio.hxx>
 #include <vigra2/unittest.hxx>
 #include <vigra2/array_nd.hxx>
 
