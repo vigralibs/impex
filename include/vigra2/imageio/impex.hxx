@@ -1,11 +1,10 @@
 /************************************************************************/
 /*                                                                      */
-/*               Copyright 2001-2002 by Gunnar Kedenburg                */
-/*        Copyright 2012 Christoph Spiel and Ullrich Koethe             */
+/*               Copyright 2014-2015 by Ullrich Koethe                  */
 /*                                                                      */
-/*    This file is part of the VIGRA computer vision library.           */
-/*    The VIGRA Website is                                              */
-/*        http://hci.iwr.uni-heidelberg.de/vigra/                       */
+/*    This file is part of the VIGRA2 computer vision library.          */
+/*    The VIGRA2 Website is                                             */
+/*        http://ukoethe.github.io/vigra2                               */
 /*    Please direct questions, bug reports, and contributions to        */
 /*        ullrich.koethe@iwr.uni-heidelberg.de    or                    */
 /*        vigra@informatik.uni-hamburg.de                               */
