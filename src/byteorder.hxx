@@ -33,8 +33,8 @@
 /*                                                                      */
 /************************************************************************/
 
-#ifndef VIGRA_BYTEORDER_HXX
-#define VIGRA_BYTEORDER_HXX
+#ifndef VIGRA2_IMAGEIO_BYTEORDER_HXX
+#define VIGRA2_IMAGEIO_BYTEORDER_HXX
 
 #include <vector>
 #include <memory>

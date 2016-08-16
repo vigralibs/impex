@@ -43,8 +43,8 @@
  *  - Added support for ICC profiles
  */
 
-#ifndef VIGRA_IMPEX_PNG_HXX
-#define VIGRA_IMPEX_PNG_HXX
+#ifndef VIGRA2_IMAGEIO_IMPEX_PNG_HXX
+#define VIGRA2_IMAGEIO_IMPEX_PNG_HXX
 
 #include <vigra2/imageio/codec.hxx>
 

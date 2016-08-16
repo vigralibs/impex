@@ -34,8 +34,8 @@
 /************************************************************************/
 
 
-#ifndef VIGRA_COMPRESSION_HXX
-#define VIGRA_COMPRESSION_HXX
+#ifndef VIGRA2_IMAGEIO_COMPRESSION_HXX
+#define VIGRA2_IMAGEIO_COMPRESSION_HXX
 
 #include <vigra2/config.hxx>
 #include <vigra2/error.hxx>

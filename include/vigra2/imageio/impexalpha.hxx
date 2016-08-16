@@ -33,8 +33,8 @@
 /*                                                                      */
 /************************************************************************/
 
-#ifndef VIGRA_IMPEXALPHA_HXX
-#define VIGRA_IMPEXALPHA_HXX
+#ifndef VIGRA2_IMAGEIO_IMPEXALPHA_HXX
+#define VIGRA2_IMAGEIO_IMPEXALPHA_HXX
 
 #include <tuple>
 #include <type_traits>

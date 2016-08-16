@@ -34,8 +34,8 @@
 /************************************************************************/
 
 
-#ifndef VIGRA_MULTI_IMPEX_HXX
-#define VIGRA_MULTI_IMPEX_HXX
+#ifndef VIGRA2_IMAGEIO_MULTI_IMPEX_HXX
+#define VIGRA2_IMAGEIO_MULTI_IMPEX_HXX
 
 #include <memory>
 #include <iomanip>

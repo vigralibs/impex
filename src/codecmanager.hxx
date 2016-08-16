@@ -33,8 +33,8 @@
 /*                                                                      */
 /************************************************************************/
 
-#ifndef VIGRA_IMPEX_CODECMANAGER_HXX
-#define VIGRA_IMPEX_CODECMANAGER_HXX
+#ifndef VIGRA2_IMAGEIO_IMPEX_CODECMANAGER_HXX
+#define VIGRA2_IMAGEIO_IMPEX_CODECMANAGER_HXX
 
 #include <map>
 #include <memory>

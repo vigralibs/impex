@@ -34,8 +34,8 @@
 /************************************************************************/
 
 
-#ifndef VIGRA_IMPEX_HDR_HXX
-#define VIGRA_IMPEX_HDR_HXX
+#ifndef VIGRA2_IMAGEIO_IMPEX_HDR_HXX
+#define VIGRA2_IMAGEIO_IMPEX_HDR_HXX
 
 #include <vector>
 

@@ -33,8 +33,8 @@
 /*                                                                      */
 /************************************************************************/
 
-#ifndef VIGRA_IMPEX_ERROR_HXX
-#define VIGRA_IMPEX_ERROR_HXX
+#ifndef VIGRA2_IMAGEIO_IMPEX_ERROR_HXX
+#define VIGRA2_IMAGEIO_IMPEX_ERROR_HXX
 
 #include <vigra2/error.hxx>
 

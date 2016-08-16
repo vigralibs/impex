@@ -45,8 +45,8 @@
  *
  */
 
-#ifndef VIGRA_IMPEX_HXX
-#define VIGRA_IMPEX_HXX
+#ifndef VIGRA2_IMAGEIO_IMPEX_HXX
+#define VIGRA2_IMAGEIO_IMPEX_HXX
 
 #include <vigra2/config.hxx>
 #include <vigra2/shape.hxx>

@@ -34,8 +34,8 @@
 /*                                                                      */
 /************************************************************************/
 
-#ifndef VIGRA_IMPEX_EXR_HXX
-#define VIGRA_IMPEX_EXR_HXX
+#ifndef VIGRA2_IMAGEIO_IMPEX_EXR_HXX
+#define VIGRA2_IMAGEIO_IMPEX_EXR_HXX
 
 #include <vigra2/imageio/codec.hxx>
 

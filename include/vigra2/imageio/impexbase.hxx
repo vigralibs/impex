@@ -33,8 +33,8 @@
 /*                                                                      */
 /************************************************************************/
 
-#ifndef VIGRA_IMPEXBASE_HXX
-#define VIGRA_IMPEXBASE_HXX
+#ifndef VIGRA2_IMAGEIO_IMPEXBASE_HXX
+#define VIGRA2_IMAGEIO_IMPEXBASE_HXX
 
 #include <limits>
 #include <string>

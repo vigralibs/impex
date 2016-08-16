@@ -33,8 +33,8 @@
 /*                                                                      */
 /************************************************************************/
 
-#ifndef VIGRA_IMPEX_AUTO_FILE_HXX
-#define VIGRA_IMPEX_AUTO_FILE_HXX
+#ifndef VIGRA2_IMAGEIO_IMPEX_AUTO_FILE_HXX
+#define VIGRA2_IMAGEIO_IMPEX_AUTO_FILE_HXX
 
 #include <string>
 #include <cstdio>

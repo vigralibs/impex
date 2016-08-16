@@ -33,8 +33,8 @@
 /*                                                                      */
 /************************************************************************/
 
-#ifndef VIGRA_IMPEX_SUN_HXX
-#define VIGRA_IMPEX_SUN_HXX
+#ifndef VIGRA2_IMAGEIO_IMPEX_SUN_HXX
+#define VIGRA2_IMAGEIO_IMPEX_SUN_HXX
 
 #include <vigra2/imageio/codec.hxx>
 

@@ -45,8 +45,8 @@
  *  - Added support for ICC profiles
  */
 
-#ifndef VIGRA_IMAGEINFO_HXX
-#define VIGRA_IMAGEINFO_HXX
+#ifndef VIGRA2_IMAGEIO_IMAGEINFO_HXX
+#define VIGRA2_IMAGEIO_IMAGEINFO_HXX
 
 #include <memory>
 #include <string>

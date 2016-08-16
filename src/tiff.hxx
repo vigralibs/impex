@@ -44,8 +44,8 @@
  *  - Added support for ICC profiles
  */
 
-#ifndef VIGRA_IMPEX_TIFF_HXX
-#define VIGRA_IMPEX_TIFF_HXX
+#ifndef VIGRA2_IMAGEIO_IMPEX_TIFF_HXX
+#define VIGRA2_IMAGEIO_IMPEX_TIFF_HXX
 
 #include <vector>
 #include <vigra2/shape.hxx>

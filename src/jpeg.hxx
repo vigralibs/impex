@@ -33,8 +33,8 @@
 /*                                                                      */
 /************************************************************************/
 
-#ifndef VIGRA_IMPEX_JPEG_HXX
-#define VIGRA_IMPEX_JPEG_HXX
+#ifndef VIGRA2_IMAGEIO_IMPEX_JPEG_HXX
+#define VIGRA2_IMAGEIO_IMPEX_JPEG_HXX
 
 #include <vector>
 #include <vigra2/imageio/codec.hxx>

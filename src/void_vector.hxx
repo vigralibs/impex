@@ -34,8 +34,8 @@
 /************************************************************************/
 
 
-#ifndef VIGRA_IMPEX_VOIDVECTOR
-#define VIGRA_IMPEX_VOIDVECTOR
+#ifndef VIGRA2_IMAGEIO_IMPEX_VOIDVECTOR
+#define VIGRA2_IMAGEIO_IMPEX_VOIDVECTOR
 
 // use this only for pod types
 

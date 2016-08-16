@@ -51,8 +51,8 @@
  *                                 4. 6.    3.0
 */
 
-#ifndef VIGRA_SIFIMPORT_HXX
-#define VIGRA_SIFIMPORT_HXX
+#ifndef VIGRA2_IMAGEIO_SIFIMPORT_HXX
+#define VIGRA2_IMAGEIO_SIFIMPORT_HXX
 
 #include <fstream>
 #include <cstring>
