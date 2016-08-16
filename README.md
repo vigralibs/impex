@@ -1,2 +1,1 @@
-# threadpool
-A simple thread pool.
+Image IO for vigra2.
