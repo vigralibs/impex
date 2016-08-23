@@ -107,7 +107,7 @@ if(ENABLE_JPEG)
   target_link_libraries(vigra_imageio PUBLIC JPEG::JPEG)
 endif()
 
-if(ENABLE_JPEG)
+if(ENABLE_TIFF)
   target_compile_definitions(vigra_imageio PRIVATE HasTIFF)
   target_link_libraries(vigra_imageio PUBLIC TIFF::TIFF)
 endif()
