@@ -8,6 +8,7 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake/vi
 include(VigraAddExternal)
 
 vigra_add_external(vigra_core REPO https://github.com/vigralibs/vigra_core.git)
+#vigra_add_external(ZLIB REPO https://github.com/madler/zlib.git)
 
 option(ENABLE_PNG "Build with PNG support.")
 option(ENABLE_OPENEXR "Build with OpenEXR support.")
@@ -16,26 +17,19 @@ option(ENABLE_TIFF "Build with TIFF support.")
 option(VIGRA_IMAGEIO_STATIC_LIB "Build a static lib." OFF)
 
 if(ENABLE_PNG)
-  find_package(PNG REQUIRED)
+  vigra_add_external(PNG)
 endif()
 
 if(ENABLE_OPENEXR)
-  find_package(OpenEXR REQUIRED)
+  vigra_add_external(OpenEXR)
 endif()
 
 if(ENABLE_JPEG)
-  find_package(JPEG REQUIRED)
-  if(NOT TARGET JPEG::JPEG)
-      add_library(JPEG::JPEG UNKNOWN IMPORTED)
-      set_target_properties(JPEG::JPEG PROPERTIES
-          INTERFACE_INCLUDE_DIRECTORIES "${JPEG_INCLUDE_DIR}")
-      set_target_properties(JPEG::JPEG PROPERTIES
-        IMPORTED_LOCATION "${JPEG_LIBRARIES}")
-  endif()
+  vigra_add_external(JPEG)
 endif()
 
 if(ENABLE_TIFF)
-  find_package(TIFF REQUIRED)
+  vigra_add_external(TIFF REPO https://github.com/vadz/libtiff.git)
 endif()
 
 IF(VIGRA_IMAGEIO_STATIC_LIB)
@@ -91,6 +85,8 @@ endif()
     # SET_TARGET_PROPERTIES(vigraimpex PROPERTIES VERSION ${SOVERSION}.${vigra_version} SOVERSION ${SOVERSION})
 # ENDIF()
 MESSAGE(STATUS "FIXME: we must add the SO version if we build a shared library")
+
+#target_link_libraries(vigra_imageio PUBLIC ZLIB::ZLIB)
 
 if(ENABLE_PNG)
   target_compile_definitions(vigra_imageio PRIVATE HasPNG)
