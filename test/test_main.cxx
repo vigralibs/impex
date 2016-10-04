@@ -1622,7 +1622,7 @@ public:
         }
     }
 };
-#if 0
+
 class GrayscaleImportExportAlphaTest
 {
 public:
@@ -1818,7 +1818,7 @@ RGBImportExportAlphaTest::testFile(const char* filename)
         should(*x == *xx);
     }
 }
-#endif
+
 struct ImageImportExportTestSuite : public vigra::test_suite
 {
     ImageImportExportTestSuite()
@@ -1917,10 +1917,10 @@ struct ImageImportExportTestSuite : public vigra::test_suite
         add(testCase(&ImageExportImportFailureTest::testShapeMismatch));
 
         // alpha-channel tests
-        // add(testCase(&GrayscaleImportExportAlphaTest::testTIFF));
-        // add(testCase(&GrayscaleImportExportAlphaTest::testPNG));
-        // add(testCase(&RGBImportExportAlphaTest::testTIFF));
-        // add(testCase(&RGBImportExportAlphaTest::testPNG));
+        add(testCase(&GrayscaleImportExportAlphaTest::testTIFF));
+        add(testCase(&GrayscaleImportExportAlphaTest::testPNG));
+        add(testCase(&RGBImportExportAlphaTest::testTIFF));
+        add(testCase(&RGBImportExportAlphaTest::testPNG));
     }
 };
 
