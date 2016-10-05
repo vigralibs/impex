@@ -207,11 +207,6 @@ void readSIF(const SIFImportInfo &, ArrayViewND<N, T>)
     vigra_precondition(false, "readSIF(): Destination array must be ArrayViewND<3, float>.");
 }
 
-inline void readSIF(const SIFImportInfo &info, ArrayViewND<3, float> array)
-{
-    readSIF(info, ArrayViewND<3, float>(array));
-}
-
 /**
     \brief Read parts of the image data from an Andor SIF file specified with an SIFImportInfo object
     and write them into the MultiArray array.
@@ -222,7 +217,7 @@ inline void readSIF(const SIFImportInfo &info, ArrayViewND<3, float> array)
     // create a 3D array of appropriate size
     MultiArray<3, float> in(Shape<3>(info.width(), info.height(), 1));
 
-    readBlock(info, Shape<3>(0,0,0), Shape<3>(w,h,1), im); // read the first frame only
+    readSIFBlock(info, Shape<3>(0,0,0), Shape<3>(w,h,1), im); // read the first frame only
 
     \endcode
 */
@@ -232,11 +227,6 @@ template <unsigned int N, class T>
 void readSIFBlock(const SIFImportInfo &, Shape<3>, Shape<3>, ArrayViewND<N, T>)
 {
     vigra_precondition(false, "readSIFBlock(): Destination array must be ArrayViewND<3, float>.");
-}
-
-inline void readSIFBlock(const SIFImportInfo &info, Shape<3> offset, Shape<3> shape, ArrayViewND<3, float> array)
-{
-    readSIFBlock(info, offset, shape, ArrayViewND<3, float>(array));
 }
 
 VIGRA_EXPORT std::ostream& operator<<(std::ostream& os, const SIFImportInfo& info);
