@@ -5,10 +5,9 @@ enable_testing()
 project(vigra_imageio VERSION 0.1 LANGUAGES C CXX)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake/vigra_cmake")
-include(VigraAddExternal)
+include(VigraAddDep)
 
-vigra_add_external(vigra_core REPO https://github.com/vigralibs/vigra_core.git)
-#vigra_add_external(ZLIB REPO https://github.com/madler/zlib.git)
+vigra_add_dep(vigra_core LIVE)
 
 option(ENABLE_PNG "Build with PNG support.")
 option(ENABLE_OPENEXR "Build with OpenEXR support.")
@@ -17,19 +16,19 @@ option(ENABLE_TIFF "Build with TIFF support.")
 option(VIGRA_IMAGEIO_STATIC_LIB "Build a static lib." OFF)
 
 if(ENABLE_PNG)
-  vigra_add_external(PNG)
+  vigra_add_dep(PNG)
 endif()
 
 if(ENABLE_OPENEXR)
-  vigra_add_external(OpenEXR)
+  vigra_add_dep(OpenEXR)
 endif()
 
 if(ENABLE_JPEG)
-  vigra_add_external(JPEG)
+  vigra_add_dep(JPEG)
 endif()
 
 if(ENABLE_TIFF)
-  vigra_add_external(TIFF REPO https://github.com/vadz/libtiff.git)
+  vigra_add_dep(TIFF)
 endif()
 
 IF(VIGRA_IMAGEIO_STATIC_LIB)
